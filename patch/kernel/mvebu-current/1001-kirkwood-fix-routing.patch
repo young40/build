@@ -1,0 +1,30 @@
+From a45d4dd56f9f2a0a94597ec3f87f9a98db765d85 Mon Sep 17 00:00:00 2001
+From: Marcin Wojtas <mw@semihalf.com>
+Date: Wed, 4 Feb 2015 14:16:26 +0100
+Subject: [PATCH] ASoC: kirkwood: fix routing in Armada 370 DB board driver
+
+	This commit fixes Analog Line In left channel double assginment in DAI
+	routing.
+
+Change-Id: I99fe9f6ffca619e0e40aeb6524a8dc4f85845956
+Signed-off-by: Marcin Wojtas <mw@semihalf.com>
+Reviewed-on: http://vgitil04.il.marvell.com:8080/16538
+Tested-by: Star_Automation <star@marvell.com>
+Reviewed-by: Nadav Haklai <nadavh@marvell.com>
+---
+ sound/soc/kirkwood/armada-370-db.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/kirkwood/armada-370-db.c b/sound/soc/kirkwood/armada-370-db.c
+index de7563bdc5c2..19b5cdd1fb15 100644
+--- a/sound/soc/kirkwood/armada-370-db.c
++++ b/sound/soc/kirkwood/armada-370-db.c
+@@ -55,7 +55,7 @@ static const struct snd_soc_dapm_route a370db_route[] = {
+ 	{ "Out Jack",	NULL,	"HPL" },
+ 	{ "Out Jack",	NULL,	"HPR" },
+ 	{ "AIN1L",	NULL,	"In Jack" },
+-	{ "AIN1L",	NULL,	"In Jack" },
++	{ "AIN1R",	NULL,	"In Jack" },
+ };
+ 
+ static struct snd_soc_dai_link a370db_dai[] = {

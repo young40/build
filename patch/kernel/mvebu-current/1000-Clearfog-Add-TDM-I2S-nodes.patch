@@ -1,0 +1,123 @@
+From 75b7e3225355402cc6e1019985f9e76adcd0f383 Mon Sep 17 00:00:00 2001
+From: Heisath <jannis@imserv.org>
+Date: Sat, 13 Mar 2021 17:45:19 +0100
+Subject: [PATCH] cfp-enable-tdmi2s
+
+Signed-off-by: Heisath <jannis@imserv.org>
+---
+ arch/arm/boot/dts/armada-388-clearfog.dtsi | 17 +++++++++
+ arch/arm/boot/dts/armada-38x.dtsi          | 44 ++++++++++++++++++++++
+ 2 files changed, 61 insertions(+)
+
+diff --git a/arch/arm/boot/dts/armada-388-clearfog.dtsi b/arch/arm/boot/dts/armada-388-clearfog.dtsi
+index a0aa1d188..22dafbdfa 100644
+--- a/arch/arm/boot/dts/armada-388-clearfog.dtsi
++++ b/arch/arm/boot/dts/armada-388-clearfog.dtsi
+@@ -61,6 +61,18 @@ usb3@f8000 {
+ 				/* CON7 */
+ 				status = "okay";
+ 			};
++			
++			tdm@b0000 {
++				pinctrl-0 = <&tdm_pins>;
++				pinctrl-names = "default";
++				pclk-freq-mhz = <8>;
++			};
++
++			audio-controller@e8000 {
++				pinctrl-0 = <&i2s_pins>;
++				pinctrl-names = "default";
++			};
++			
+ 		};
+ 
+ 		pcie {
+@@ -86,6 +98,11 @@ sfp: sfp {
+ 		tx-fault-gpio = <&expander0 13 GPIO_ACTIVE_HIGH>;
+ 		maximum-power-milliwatt = <2000>;
+ 	};
++	
++    sound {
++            compatible = "marvell,a385db-audio";
++            // marvell,audio-codec = <&audio_codec &spdif_out &spdif_in>;
++    };
+ };
+ 
+ &eth1 {
+diff --git a/arch/arm/boot/dts/armada-38x.dtsi b/arch/arm/boot/dts/armada-38x.dtsi
+index 9b1a24cc5..b7dabee33 100644
+--- a/arch/arm/boot/dts/armada-38x.dtsi
++++ b/arch/arm/boot/dts/armada-38x.dtsi
+@@ -289,6 +289,18 @@ sata3_pins: sata-pins-3 {
+ 					marvell,pins = "mpp44";
+ 					marvell,function = "sata3";
+ 				};
++				
++				i2s_pins: i2s_pins {
++					marvell,pins = "mpp48", "mpp49", "mpp50",
++						       "mpp51", "mpp52", "mpp53";
++					marvell,function = "audio";
++				};
++
++				tdm_pins: tdm_pins {
++					marvell,pins = "mpp48", "mpp49", "mpp50",
++						       "mpp51", "mpp52", "mpp53";
++					marvell,function = "tdm2c";
++				};
+ 			};
+ 
+ 			gpio0: gpio@18100 {
+@@ -606,6 +618,16 @@ nand_controller: nand-controller@d0000 {
+ 				status = "disabled";
+ 			};
+ 
++            tdm@b0000 {
++				compatible = "marvell,armada-380-tdm";
++				reg = <0xb0000 0x5000>, <0x18400 0xc>, <0x18730 0x4>;
++				reg-names = "tdm_regs", "pll_regs", "dco_div";
++				interrupts = <0 27 0x4>;
++				clocks = <&gateclk 25>;
++				clock-names = "gateclk";
++				status = "disabled";
++			};
++
+ 			sdhci: sdhci@d8000 {
+ 				compatible = "marvell,armada-380-sdhci";
+ 				reg-names = "sdhci", "mbus", "conf-sdio3";
+@@ -617,6 +639,15 @@ sdhci: sdhci@d8000 {
+ 				mrvl,clk-delay-cycles = <0x1F>;
+ 				status = "disabled";
+ 			};
++			
++			audio_controller: audio-controller@e8000 {
++				compatible = "marvell,armada-380-audio";
++				reg = <0xe8000 0x4000>, <0x18410 0xc>, <0x18204 0x4>;
++				interrupts = <0 75 0x4>;
++				clocks = <&gateclk 0>;
++				clock-names = "internal";
++				status = "okay";
++			};
+ 
+ 			usb3_0: usb3@f0000 {
+ 				compatible = "marvell,armada-380-xhci";
+@@ -704,4 +735,17 @@ refclk: oscillator {
+ 			clock-frequency = <25000000>;
+ 		};
+ 	};
++	
++	sound {
++            marvell,audio-controller = <&audio_controller>;
++	        status = "okay";
++    };
++
++    spdif_out: spdif-out {
++            compatible = "linux,spdif-dit";
++    };
++
++    spdif_in: spdif-in {
++            compatible = "linux,spdif-dir";
++    };
+ };
+-- 
+Created with Armbian build tools https://github.com/armbian/build
+
