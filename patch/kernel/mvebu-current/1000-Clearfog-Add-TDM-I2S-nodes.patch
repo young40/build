@@ -119,5 +119,42 @@ index 9b1a24cc5..b7dabee33 100644
 +    };
  };
 -- 
+From f58c31830a651280a41c40c7dc4823cc3f33df82 Mon Sep 17 00:00:00 2001
+From: Heisath <jannis@imserv.org>
+Date: Sun, 14 Mar 2021 00:50:20 +0100
+Subject: [PATCH] Patching something
+
+Signed-off-by: Heisath <jannis@imserv.org>
+---
+ arch/arm/boot/dts/armada-388-clearfog.dtsi | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/armada-388-clearfog.dtsi b/arch/arm/boot/dts/armada-388-clearfog.dtsi
+index 40f364676..d31f482cf 100644
+--- a/arch/arm/boot/dts/armada-388-clearfog.dtsi
++++ b/arch/arm/boot/dts/armada-388-clearfog.dtsi
+@@ -101,7 +101,7 @@ sfp: sfp {
+ 	
+     sound {
+             compatible = "marvell,a385db-audio";
+-            // marvell,audio-codec = <&audio_codec &spdif_out &spdif_in>;
++            marvell,audio-codec = <&audio_codec &spdif_out &spdif_in>;
+     };
+ };
+ 
+@@ -128,6 +128,12 @@ &eth2 {
+ };
+ 
+ &i2c0 {
++
++    audio_codec: audio-codec@4a {
++		compatible = "cirrus,cs42l51";
++        reg = <0x4a>;
++	};
++
+ 	/*
+ 	 * PCA9655 GPIO expander, up to 1MHz clock.
+ 	 *  0-CON3 CLKREQ#
+-- 
 Created with Armbian build tools https://github.com/armbian/build
 
