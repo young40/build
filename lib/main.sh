@@ -32,7 +32,11 @@ fi
 umask 002
 
 # destination
-DEST="${SRC}"/output
+if [ -d "$CONFIG_PATH/output" ]; then
+	DEST="${CONFIG_PATH}"/output
+else
+	DEST="${SRC}"/output
+fi
 
 if [[ $BUILD_ALL != "yes" && -z $ROOT_FS_CREATE_ONLY ]]; then
 	# override stty size
@@ -265,7 +269,7 @@ if [[ -z $BRANCH ]]; then
 	options=()
 	[[ $KERNEL_TARGET == *current* ]] && options+=("current" "Recommended. Come with best support")
 	[[ $KERNEL_TARGET == *legacy* ]] && options+=("legacy" "Old stable / Legacy")
-	[[ $KERNEL_TARGET == *dev* && $EXPERT = yes ]] && options+=("dev" "\Z1Development version (@kernel.org)\Zn")
+	[[ $KERNEL_TARGET == *edge* && $EXPERT = yes ]] && options+=("edge" "\Z1Bleeding edge from @kernel.org\Zn")
 
 	# do not display selection dialog if only one kernel branch is available
 	if [[ "${#options[@]}" == 2 ]]; then
@@ -388,13 +392,12 @@ BOOTSOURCEDIR="${BOOTDIR}/$(branch2dir "${BOOTBRANCH}")"
 LINUXSOURCEDIR="${KERNELDIR}/$(branch2dir "${KERNELBRANCH}")"
 [[ -n $ATFSOURCE ]] && ATFSOURCEDIR="${ATFDIR}/$(branch2dir "${ATFBRANCH}")"
 
-# define package names
-DEB_BRANCH=${BRANCH//default}
-# if not empty, append hyphen
-DEB_BRANCH=${DEB_BRANCH:+${DEB_BRANCH}-}
-CHOSEN_UBOOT=linux-u-boot-${DEB_BRANCH}${BOARD}
-CHOSEN_KERNEL=linux-image-${DEB_BRANCH}${LINUXFAMILY}
-CHOSEN_ROOTFS=linux-${RELEASE}-root-${DEB_BRANCH}${BOARD}
+BSP_CLI_PACKAGE_NAME="armbian-bsp-cli-${BOARD}"
+BSP_CLI_PACKAGE_FULLNAME="${BSP_CLI_PACKAGE_NAME}_${REVISION}_${ARCH}"
+
+CHOSEN_UBOOT=linux-u-boot-${BRANCH}-${BOARD}
+CHOSEN_KERNEL=linux-image-${BRANCH}-${LINUXFAMILY}
+CHOSEN_ROOTFS=${BSP_CLI_PACKAGE_NAME}
 CHOSEN_DESKTOP=armbian-${RELEASE}-desktop-${DESKTOP_ENVIRONMENT}
 CHOSEN_KSRC=linux-source-${BRANCH}-${LINUXFAMILY}
 
@@ -488,7 +491,7 @@ fi
 overlayfs_wrapper "cleanup"
 
 # create board support package
-[[ -n $RELEASE && ! -f ${DEB_STORAGE}/$RELEASE/${CHOSEN_ROOTFS}_${REVISION}_${ARCH}.deb ]] && create_board_package
+[[ -n $RELEASE && ! -f ${DEB_STORAGE}/$RELEASE/${BSP_CLI_PACKAGE_FULLNAME}.deb ]] && create_board_package
 
 # create desktop package
 [[ -n $RELEASE && $DESKTOP_ENVIRONMENT && ! -f ${DEB_STORAGE}/$RELEASE/${CHOSEN_DESKTOP}_${REVISION}_all.deb ]] && create_desktop_package
