@@ -1,0 +1,123 @@
+From 67ae1ab62362c50f2eff59de1e77ddc80f80dee1 Mon Sep 17 00:00:00 2001
+From: Heisath <jannis@imserv.org>
+Date: Sun, 14 Mar 2021 16:51:02 +0100
+Subject: [PATCH] Patching something
+
+Signed-off-by: Heisath <jannis@imserv.org>
+---
+ arch/arm/boot/dts/armada-388-clearfog.dtsi    | 13 +++++-----
+ .../arm/boot/dts/armada-388-clearfog.dtsi.rej | 24 +++++++++++++++++++
+ sound/soc/codecs/uda1334.c                    |  2 ++
+ sound/soc/kirkwood/armada-370-db.c            |  7 +++---
+ sound/soc/kirkwood/kirkwood-i2s.c             |  4 ++++
+ 5 files changed, 41 insertions(+), 9 deletions(-)
+ create mode 100644 arch/arm/boot/dts/armada-388-clearfog.dtsi.rej
+
+diff --git a/arch/arm/boot/dts/armada-388-clearfog.dtsi b/arch/arm/boot/dts/armada-388-clearfog.dtsi
+index d31f482cf..d0390ba6a 100644
+--- a/arch/arm/boot/dts/armada-388-clearfog.dtsi
++++ b/arch/arm/boot/dts/armada-388-clearfog.dtsi
+@@ -101,7 +101,13 @@ sfp: sfp {
+ 	
+     sound {
+             compatible = "marvell,a385db-audio";
+-            marvell,audio-codec = <&audio_codec &spdif_out &spdif_in>;
++            marvell,audio-codec = <&uda1334 &spdif_out &spdif_in>;
++    };
++   
++    uda1334: audio-codec {
++	    compatible = "nxp,uda1334";
++	    nxp,mute-gpios = <&gpio0 22 GPIO_ACTIVE_LOW>;
++	    nxp,deemph-gpios = <&gpio0 29 GPIO_ACTIVE_LOW>;
+     };
+ };
+ 
+@@ -129,11 +135,6 @@ &eth2 {
+ 
+ &i2c0 {
+ 
+-    audio_codec: audio-codec@4a {
+-		compatible = "cirrus,cs42l51";
+-        reg = <0x4a>;
+-	};
+-
+ 	/*
+ 	 * PCA9655 GPIO expander, up to 1MHz clock.
+ 	 *  0-CON3 CLKREQ#
+diff --git a/sound/soc/codecs/uda1334.c b/sound/soc/codecs/uda1334.c
+index 21ab8c548..f50d7d1e1 100644
+--- a/sound/soc/codecs/uda1334.c
++++ b/sound/soc/codecs/uda1334.c
+@@ -277,6 +277,8 @@ static int uda1334_codec_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		dev_err(&pdev->dev, "Failed to register component: %d\n", ret);
+ 
++	dev_info(&pdev->dev, "probed uda1334\n");
++
+ 	return ret;
+ }
+ 
+diff --git a/sound/soc/kirkwood/armada-370-db.c b/sound/soc/kirkwood/armada-370-db.c
+index 8ae3260d0..bb7b92e00 100644
+--- a/sound/soc/kirkwood/armada-370-db.c
++++ b/sound/soc/kirkwood/armada-370-db.c
+@@ -13,7 +13,6 @@
+ #include <sound/soc.h>
+ #include <linux/of.h>
+ #include <linux/platform_data/asoc-kirkwood.h>
+-#include "../codecs/cs42l51.h"
+ 
+ static int a370db_hw_params(struct snd_pcm_substream *substream,
+ 			    struct snd_pcm_hw_params *params)
+@@ -59,7 +58,7 @@ static const struct snd_soc_dapm_route a370db_route[] = {
+ 
+ SND_SOC_DAILINK_DEFS(analog,
+ 	DAILINK_COMP_ARRAY(COMP_CPU("i2s")),
+-	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "cs42l51-hifi")),
++	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "uda1334-hifi")),
+ 	DAILINK_COMP_ARRAY(COMP_EMPTY()));
+ 
+ SND_SOC_DAILINK_DEFS(spdif_out,
+@@ -74,7 +73,7 @@ SND_SOC_DAILINK_DEFS(spdif_in,
+ 
+ static struct snd_soc_dai_link a370db_dai[] = {
+ {
+-	.name = "CS42L51",
++	.name = "UDA1334",
+ 	.stream_name = "analog",
+ 	.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS,
+ 	.ops = &a370db_ops,
+@@ -134,6 +133,8 @@ static int a370db_probe(struct platform_device *pdev)
+ 		of_parse_phandle(pdev->dev.of_node,
+ 				 "marvell,audio-codec", 2);
+ 
++	dev_info(&pdev->dev, "probed armada370db\n");
++
+ 	return devm_snd_soc_register_card(card->dev, card);
+ }
+ 
+diff --git a/sound/soc/kirkwood/kirkwood-i2s.c b/sound/soc/kirkwood/kirkwood-i2s.c
+index 61a52d7f1..71521ebf5 100644
+--- a/sound/soc/kirkwood/kirkwood-i2s.c
++++ b/sound/soc/kirkwood/kirkwood-i2s.c
+@@ -666,6 +666,8 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+ 		err = armada_38x_i2s_init_quirk(pdev, priv, soc_dai);
+ 		if (err < 0)
+ 			return err;
++
++		dev_info(&pdev->dev, "init kirkwood-a380\n");
+ 	}
+ 
+ 	if (np) {
+@@ -724,6 +726,8 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+ 
+ 	kirkwood_i2s_init(priv);
+ 
++	dev_info(&pdev->dev, "init done kirkwood-a380\n");
++
+ 	return 0;
+ 
+  err_component:
+-- 
+Created with Armbian build tools https://github.com/armbian/build
+
