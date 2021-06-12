@@ -726,6 +726,7 @@ compile_sunxi_tools()
 	cd "${SRC}"/cache/sources/sunxi-tools || exit
 	# need to check if /usr/local/bin/sunxi-fexc to detect new Docker containers with old cached sources
 	if [[ ! -f .commit_id || $(improved_git rev-parse @ 2>/dev/null) != $(<.commit_id) || ! -f /usr/local/bin/sunxi-fexc ]]; then
+		process_patch_file "${SRC}/patch/misc/sunxi-tools.patch" "applying"
 		display_alert "Compiling" "sunxi-tools" "info"
 		make -s clean >/dev/null
 		make -s tools >/dev/null
