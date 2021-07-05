@@ -1,0 +1,222 @@
+From f2b54dafa26ef90afecc563470e2d35b5d532e17 Mon Sep 17 00:00:00 2001
+From: tonymac32 <tonymckahan@gmail.com>
+Date: Mon, 5 Jul 2021 15:22:06 -0400
+Subject: [PATCH] type-c DP
+
+Signed-off-by: tonymac32 <tonymckahan@gmail.com>
+---
+ .../boot/dts/rockchip/rk3399-roc-pc.dtsi      | 132 +++++++++++++++++-
+ 1 file changed, 131 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
+index ee76350f2..8532080d0 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
+@@ -5,6 +5,7 @@
+ 
+ /dts-v1/;
+ #include <dt-bindings/input/linux-event-codes.h>
++#include <dt-bindings/usb/pd.h>
+ #include <dt-bindings/pwm/pwm.h>
+ #include "rk3399.dtsi"
+ #include "rk3399-opp.dtsi"
+@@ -209,6 +210,11 @@ vdd_log: vdd-log {
+ 	};
+ };
+ 
++&cdn_dp {
++	status = "okay";
++	extcon = <&fusb0 &fusb1>;
++};
++
+ &cpu_l0 {
+ 	cpu-supply = <&vdd_cpu_l>;
+ };
+@@ -523,6 +529,44 @@ fusb1: usb-typec@22 {
+ 		pinctrl-0 = <&fusb1_int>;
+ 		vbus-supply = <&vcc_vbus_typec1>;
+ 		status = "okay";
++		connector {
++			compatible = "usb-c-connector";
++			label = "USB-C";
++			power-role = "source";
++			data-role = "dual";
++			try-power-role = "source";
++			source-pdos = <PDO_FIXED(5000, 1200, PDO_FIXED_USB_COMM)>;
++		
++			extcon-cables = <1 2 5 6 9 10 12 44>;
++			typec-altmodes = <0xff01 1 0x001c0000 1>;
++		
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				port@0 {
++					reg = <0>;
++					usb1_con_hs: endpoint {
++						remote-endpoint = 
++							<&u2phy1_typec_hs>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++	
++					usb1_con_ss: endpoint {
++						remote-endpoint = 
++							<&tcphy1_typec_ss>;
++					};
++				};
++				port@2 {
++					reg = <2>;
++					usb1_con_dp: endpoint {
++						remote-endpoint = 
++							<&tcphy1_typec_dp>;
++					};
++				};
++			};
++		};		
+ 	};
+ };
+ 
+@@ -540,6 +584,45 @@ fusb0: usb-typec@22 {
+ 		pinctrl-0 = <&fusb0_int>;
+ 		vbus-supply = <&vcc_vbus_typec0>;
+ 		status = "okay";
++		connector {
++			compatible = "usb-c-connector";
++			label = "USB-C";
++			power-role = "dual";
++			data-role = "dual";
++			try-power-role = "sink";
++			source-pdos = <PDO_FIXED(5000, 1200, PDO_FIXED_USB_COMM)>;
++			sink-pdos = <PDO_VAR(5000, 15000, 3000) PDO_FIXED(5000, 2500, PDO_FIXED_USB_COMM)>;
++			op-sink-microwatt = <10000000>;
++		
++			extcon-cables = <1 2 5 6 9 10 12 44>;
++			typec-altmodes = <0xff01 1 0x001c0000 1>;
++		
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				port@0 {
++					reg = <0>;
++					usb0_con_hs: endpoint {
++						remote-endpoint = 
++							<&u2phy0_typec_hs>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++					usb0_con_ss: endpoint {
++						remote-endpoint = 
++							<&tcphy0_typec_ss>;
++					};
++				};
++				port@2 {
++					reg = <2>;
++					usb0_con_dp: endpoint {
++						remote-endpoint = 
++							<&tcphy0_typec_dp>;
++					};
++				};
++			};
++		};	
+ 	};
+ 
+ 	mp8859: regulator@66 {
+@@ -720,13 +803,47 @@ flash@0 {
+ };
+ 
+ &tcphy0 {
++	extcon= <&fusb0>;
+ 	status = "okay";
+ };
+ 
+ &tcphy1 {
++	extcon= <&fusb1>;
+ 	status = "okay";
+ };
+ 
++&tcphy0_dp {
++	port {
++		tcphy0_typec_dp: endpoint {
++			remote-endpoint = <&usb0_con_dp>;
++		};
++	};
++};
++
++&tcphy0_usb3 {
++	port {
++		tcphy0_typec_ss: endpoint {
++			remote-endpoint = <&usb0_con_ss>;
++		};
++	};
++};
++
++&tcphy1_dp {
++	port {
++		tcphy1_typec_dp: endpoint {
++			remote-endpoint = <&usb1_con_dp>;
++		};
++	};
++};
++
++&tcphy1_usb3 {
++	port {
++		tcphy1_typec_ss: endpoint {
++			remote-endpoint = <&usb1_con_ss>;
++		};
++	};
++};
++
+ &tsadc {
+ 	/* tshut mode 0:CRU 1:GPIO */
+ 	rockchip,hw-tshut-mode = <1>;
+@@ -741,6 +858,11 @@ &u2phy0 {
+ 	u2phy0_otg: otg-port {
+ 		phy-supply = <&vcc_vbus_typec0>;
+ 		status = "okay";
++		port {
++			u2phy0_typec_hs: endpoint {
++				remote-endpoint = <&usb0_con_hs>;
++			};
++		};
+ 	};
+ 
+ 	u2phy0_host: host-port {
+@@ -751,10 +873,15 @@ u2phy0_host: host-port {
+ 
+ &u2phy1 {
+ 	status = "okay";
+-
++	extcon = <&fusb1>;
+ 	u2phy1_otg: otg-port {
+ 		phy-supply = <&vcc_vbus_typec1>;
+ 		status = "okay";
++		port {
++			u2phy1_typec_hs: endpoint {
++				remote-endpoint = <&usb1_con_hs>;
++			};
++		};
+ 	};
+ 
+ 	u2phy1_host: host-port {
+@@ -794,6 +921,8 @@ &usbdrd3_0 {
+ };
+ 
+ &usbdrd_dwc3_0 {
++	extcon = <&fusb0>;
++	dr_mode = "host";
+ 	status = "okay";
+ };
+ 
+@@ -802,6 +931,7 @@ &usbdrd3_1 {
+ };
+ 
+ &usbdrd_dwc3_1 {
++	extcon = <&fusb1>;
+ 	status = "okay";
+ 	dr_mode = "host";
+ };
+-- 
+Created with Armbian build tools https://github.com/armbian/build
+
