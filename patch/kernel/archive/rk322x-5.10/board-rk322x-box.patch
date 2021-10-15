@@ -1,9 +1,9 @@
 diff --git a/arch/arm/boot/dts/rk322x-box.dts b/arch/arm/boot/dts/rk322x-box.dts
 new file mode 100644
-index 000000000..6f2c52cf5
+index 000000000..556539618
 --- /dev/null
 +++ b/arch/arm/boot/dts/rk322x-box.dts
-@@ -0,0 +1,462 @@
+@@ -0,0 +1,466 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +
 +/dts-v1/;
@@ -82,6 +82,15 @@ index 000000000..6f2c52cf5
 +		};
 +	};
 +
++	vcc_sys: vcc-sys-regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_sys";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++	};
++
 +	vcc_host: vcc-host-regulator {
 +		compatible = "regulator-fixed";
 +		enable-active-high;
@@ -135,15 +144,6 @@ index 000000000..6f2c52cf5
 +		regulator-always-on;
 +		regulator-boot-on;
 +		vin-supply = <&vccio_1v8>;
-+	};
-+
-+	vcc_sys: vcc-sys-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_sys";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
 +	};
 +
 +	vdd_arm: vdd-arm-regulator {
@@ -250,6 +250,10 @@ index 000000000..6f2c52cf5
 +
 +&cpu3 {
 +	cpu-supply = <&vdd_arm>;
++};
++
++&dmc {
++	logic-supply = <&vdd_log>;
 +};
 +
 +&io_domains {
