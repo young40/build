@@ -1,4 +1,4 @@
-FROM ubuntu:21.04
+FROM ubuntu:rolling
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get -y install \
        joe \
@@ -45,7 +45,7 @@ RUN apt-get update \
        f2fs-tools \
        fakeroot \
        flex \
-       g++-8-arm-linux-gnueabihf \
+       g++-arm-linux-gnueabihf \
        gawk \
        gcc-arm-linux-gnueabihf \
        gcc-arm-linux-gnueabi \
