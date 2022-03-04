@@ -335,8 +335,8 @@ waiter_local_git ()
 	cd $work_dir || exit_with_error
 
 	display_alert "Checking git sources" "$dir $url$name/$branch" "info"
-	display_alert "$url"
-	echo "$url"
+	display_alert "ahahhh ${url}"
+	echo "ahahhh ${url}"
 
 	if [ "$(git rev-parse --git-dir 2>/dev/null)" != ".git" ]; then
 		git init -q .
@@ -353,6 +353,7 @@ waiter_local_git ()
 				exit 177
 			fi
 
+			echo "aiiouououououoo"
 			echo $url
 			git remote add -t $branch $name $url
 
