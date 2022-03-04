@@ -15,6 +15,15 @@
 
 SRC="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
+echo "USE_GITHUB_UBOOT_MIRROR: "
+echo $USE_GITHUB_UBOOT_MIRROR
+
+echo "REGIONAL_MIRROR"
+echo $REGIONAL_MIRROR
+
+echo "UBOOT_MIRROR"
+echo $UBOOT_MIRROR
+
 # check for whitespace in ${SRC} and exit for safety reasons
 grep -q "[[:space:]]" <<<"${SRC}" && { echo "\"${SRC}\" contains whitespace. Not supported. Aborting." >&2 ; exit 1 ; }
 
