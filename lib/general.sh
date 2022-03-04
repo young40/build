@@ -353,6 +353,7 @@ waiter_local_git ()
 				exit 177
 			fi
 
+			echo $url
 			git remote add -t $branch $name $url
 
 			# Handle an exception if the initial tag is the top of the branch
