@@ -491,8 +491,10 @@ fetch_from_repo()
 		rm -rf .git ./*
 	fi
 
+	git remote get-url origin
+
 	if [[ "$(git rev-parse --git-dir 2>/dev/null)" != ".git" ]]; then
-		display_alert "Creating local copy"
+		display_alert "Creating local copy ${url}"
 		git init -q .
 		git remote add origin "${url}"
 		# Here you need to upload from a new address
