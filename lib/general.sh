@@ -334,7 +334,7 @@ waiter_local_git ()
 	mkdir -p $work_dir
 	cd $work_dir || exit_with_error
 
-	display_alert "Checking git sources" "$dir $url$name/$branch" "info"
+	display_alert "Checking 1 git sources" "$dir $url$name/$branch" "info"
 	display_alert "ahahhh ${url}"
 	echo "ahahhh ${url}"
 
@@ -356,6 +356,7 @@ waiter_local_git ()
 			echo "aiiouououououoo"
 			echo $url
 			git remote add -t $branch $name $url
+			git remote get-url origin
 
 			# Handle an exception if the initial tag is the top of the branch
 			# As v5.16 == HEAD
@@ -464,7 +465,7 @@ fetch_from_repo()
 		local ref_name=${ref##*:}
 	fi
 
-	display_alert "Checking git sources" "$dir $ref_name" "info"
+	display_alert "Checking 2 git sources" "$dir $ref_name" "info"
 
 	# get default remote branch name without cloning
 	# local ref_name=$(git ls-remote --symref $url HEAD | grep -o 'refs/heads/\S*' | sed 's%refs/heads/%%')
@@ -501,6 +502,8 @@ fetch_from_repo()
 		# Here you need to upload from a new address
 		offline=false
 	fi
+
+	git remote get-url origin
 
 	local changed=false
 
