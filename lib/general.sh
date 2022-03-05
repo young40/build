@@ -448,7 +448,7 @@ fetch_from_repo()
 	local ref_subdir=$4
 
 	# Set GitHub mirror before anything else touches $url
-	url=${url//'https://github.com/'/$GITHUB_SOURCE}
+	url=${url//'https://github.com/'/$GITHUB_SOURCE'/'}
 
 	# The 'offline' variable must always be set to 'true' or 'false'
 	if [ "$OFFLINE_WORK" == "yes" ]; then
