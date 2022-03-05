@@ -95,10 +95,17 @@ case $REGIONAL_MIRROR in
 		[[ -z $GITHUB_MIRROR ]] && GITHUB_MIRROR=cnpmjs
 		[[ -z $DOWNLOAD_MIRROR ]] && DOWNLOAD_MIRROR=china
 		;;
+	my)
+		[[ -z $USE_MAINLINE_GOOGLE_MIRROR ]] && [[ -z $MAINLINE_MIRROR ]] && MAINLINE_MIRROR=my
+		[[ -z $USE_GITHUB_UBOOT_MIRROR ]] && [[ -z $UBOOT_MIRROR ]] && UBOOT_MIRROR=my
+		[[ -z $GITHUB_MIRROR ]] && GITHUB_MIRROR=my
+		[[ -z $DOWNLOAD_MIRROR ]] && DOWNLOAD_MIRROR=china
+		;;
 	*)
 		;;
 esac
 
+echo $MY_URL
 echo "UBOOT_MIRROR"
 echo $UBOOT_MIRROR
 
@@ -118,6 +125,10 @@ case $MAINLINE_MIRROR in
 		MAINLINE_KERNEL_SOURCE='https://mirrors.bfsu.edu.cn/git/linux-stable.git'
 		MAINLINE_FIRMWARE_SOURCE='https://mirrors.bfsu.edu.cn/git/linux-firmware.git'
 		;;
+	my)
+		MAINLINE_KERNEL_SOURCE='${MY_URL}/git/linux-stable.git'
+		MAINLINE_FIRMWARE_SOURCE='${MY_URL}/git/linux-firmware.git'
+		;;
 	*)
 		MAINLINE_KERNEL_SOURCE='git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git'
 		MAINLINE_FIRMWARE_SOURCE='git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git'
@@ -135,6 +146,9 @@ case $UBOOT_MIRROR in
 	github)
 		MAINLINE_UBOOT_SOURCE='https://github.com/u-boot/u-boot'
 		;;
+	my)
+		MAINLINE_UBOOT_SOURCE='${MY_URL}/u-boot/u-boot'
+		;;
 	*)
 		MAINLINE_UBOOT_SOURCE='https://source.denx.de/u-boot/u-boot.git'
 		;;
@@ -148,6 +162,9 @@ case $GITHUB_MIRROR in
 		;;
 	gitclone)
 		GITHUB_SOURCE='https://gitclone.com/github.com/'
+		;;
+	my)
+		GITHUB_SOURCE='${MY_URL}/github.com/'
 		;;
 	*)
 		GITHUB_SOURCE='https://github.com/'
