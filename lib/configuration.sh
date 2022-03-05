@@ -147,7 +147,7 @@ case $UBOOT_MIRROR in
 		MAINLINE_UBOOT_SOURCE='https://github.com/u-boot/u-boot'
 		;;
 	my)
-		MAINLINE_UBOOT_SOURCE="${MY_URL}/gitee.com/mirrors/u-boot/u-boot"
+		MAINLINE_UBOOT_SOURCE="${MY_URL}/gitee.com/mirrors/u-boot/"
 		;;
 	*)
 		MAINLINE_UBOOT_SOURCE='https://source.denx.de/u-boot/u-boot.git'
