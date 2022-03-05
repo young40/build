@@ -126,8 +126,8 @@ case $MAINLINE_MIRROR in
 		MAINLINE_FIRMWARE_SOURCE='https://mirrors.bfsu.edu.cn/git/linux-firmware.git'
 		;;
 	my)
-		MAINLINE_KERNEL_SOURCE="${MY_URL}/git/linux-stable.git"
-		MAINLINE_FIRMWARE_SOURCE="${MY_URL}/git/linux-firmware.git"
+		MAINLINE_KERNEL_SOURCE="${MY_URL}/mirrors.bfsu.edu.cn/git/linux-stable.git"
+		MAINLINE_FIRMWARE_SOURCE="${MY_URL}/mirrors.bfsu.edu.cn/git/linux-firmware.git"
 		;;
 	*)
 		MAINLINE_KERNEL_SOURCE='git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git'
@@ -147,7 +147,7 @@ case $UBOOT_MIRROR in
 		MAINLINE_UBOOT_SOURCE='https://github.com/u-boot/u-boot'
 		;;
 	my)
-		MAINLINE_UBOOT_SOURCE="${MY_URL}/u-boot/u-boot"
+		MAINLINE_UBOOT_SOURCE="${MY_URL}/gitee.com/mirrors/u-boot/u-boot"
 		;;
 	*)
 		MAINLINE_UBOOT_SOURCE='https://source.denx.de/u-boot/u-boot.git'
