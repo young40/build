@@ -164,7 +164,7 @@ case $GITHUB_MIRROR in
 		GITHUB_SOURCE='https://gitclone.com/github.com/'
 		;;
 	my)
-		GITHUB_SOURCE="${MY_URL}/github.com/"
+		GITHUB_SOURCE="${MY_URL}/github.com"
 		;;
 	*)
 		GITHUB_SOURCE='https://github.com/'
